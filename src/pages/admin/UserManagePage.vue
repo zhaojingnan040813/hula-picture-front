@@ -2,54 +2,49 @@
   <button @click="toggleSortOrder">升序or降序</button>
 
   <div id="userManagePage">
-    <a-table :columns="columns" :data-source="dataList">
-<!-- 这个BodeCell模版是用于定义表格中的数据怎么展示 column是列名，record是这一行数据 -->
+    <a-table :columns="columns" :data-source="dataList"
+             :@change="doTableChange"
+             :pagination="pagination"
+      >
+      <!-- 这个BodeCell模版是用于定义表格中的数据怎么展示 column是列名，record是这一行数据 -->
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'userAvatar'">
-          <a-image :src="record.userAvatar" width="30px"/>
+          <a-image :src="record.userAvatar" width="30px" />
         </template>
 
         <template v-if="column.dataIndex === 'userRole'">
-          <div v-if="record.userRole=== 'admin' " >
+          <div v-if="record.userRole === 'admin'">
             <a-tag color="green">管理员</a-tag>
           </div>
-          <div v-else-if="record.userRole=== 'user' " >
+          <div v-else-if="record.userRole === 'user'">
             <a-tag color="blue">普通用户</a-tag>
           </div>
         </template>
 
-        <template v-if="column.dataIndex==='createTime'">
-          {{ dayjs(record.createTime).format('YYYY-MM-DD HH:mm:ss')  }}
+        <template v-if="column.dataIndex === 'createTime'">
+          {{ dayjs(record.createTime).format('YYYY-MM-DD HH:mm:ss') }}
         </template>
-
-        <template v-if="column.dataIndex==='updateTime'">
-          {{ dayjs(record.updateTime).format('YYYY-MM-DD HH:mm:ss')  }}
-        </template>
-
-
-
+<!-- 后端没有给你返回更新时间，然后这个时间就是dayjs给你显示的当前时间 -->
+<!--        <template v-if="column.dataIndex === 'updateTime'">-->
+<!--          {{ dayjs(record.updateTime).format('YYYY-MM-DD HH:mm:ss') }}-->
+<!--        </template>-->
 
         <template v-else-if="column.key === 'action'">
           <a-button danger>删除</a-button>
-
-
         </template>
       </template>
-
-
     </a-table>
   </div>
-
 </template>
 <script lang="ts" setup>
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { listUserVoByPageUsingPost } from '@/api/userController'
 import { message } from 'ant-design-vue'
 import dayjs from 'dayjs'
 
 const columns = [
   {
-    title: 'id',// 这个是展示在前端页面的标题
+    title: 'id', // 这个是展示在前端页面的标题
     dataIndex: 'id', // 它对应着数据库的字段
   },
   {
@@ -82,12 +77,9 @@ const columns = [
   },
   {
     title: '操作',
-    key: 'action',//因为操作它不是从数据库里面取的值，这个你是可以自己定义的
+    key: 'action', //因为操作它不是从数据库里面取的值，这个你是可以自己定义的
   },
 ]
-
-
-
 
 // 模拟数据,它应该是从后端获取的
 // 数据
@@ -99,8 +91,28 @@ const searchParams = reactive<API.UserQueryRequest>({
   current: 1,
   pageSize: 10,
   sortField: 'createTime',
-  sortOrder: 'ascend',  // 可以取ascend或者descend
+  sortOrder: 'ascend', // 可以取ascend或者descend
 })
+
+// 表格变化处理 这个page参数我不是很理解，它是一个对象，里面有current和pageSize，current是当前页，pageSize是每页显示的条数
+const doTableChange = (page: any) => {
+  searchParams.current = page.current
+  searchParams.pageSize = page.pageSize
+  fetchData() // 更改完数据之后重新获取数据
+}
+
+// 分页参数 ,关于这里为什么使用computed而不是reactive是因为reactive是对对象内的数据进行监控，
+// 而computed是对表达式进行监控，在这里我们不需要对表达式进行监控，只需要对对象内的数据进行监控，所以我们使用computed
+const pagination = computed(() => {
+  return {
+    current: searchParams.current ?? 1,
+    pageSize: searchParams.pageSize ?? 10,
+    total: total.value,
+    showSizeChanger: true,
+    showTotal: (total) => `共 ${total} 条`, //应该是编辑器的问题导致total下面爆红线，但是不影响运行
+  }
+})
+
 
 // 切换排序顺序
 const toggleSortOrder = () => {
@@ -108,13 +120,13 @@ const toggleSortOrder = () => {
   fetchData()
 }
 
-
 // 获取数据  双问号代表前面有值就取前面的值，没有值就取后面的值
 const fetchData = async () => {
   const res = await listUserVoByPageUsingPost({
-    ...searchParams //reactive的响应式变量通常我们都是给它展开然后赋值给body
+    ...searchParams, //reactive的响应式变量通常我们都是给它展开然后赋值给body
   })
-  if (res.data.data) {//第一个data是ref响应式变量拿内容要用data，第二个data是后端返回的data，有个字段它叫 records
+  if (res.data.data) {
+    //第一个data是ref响应式变量拿内容要用data，第二个data是后端返回的data，有个字段它叫 records
     dataList.value = res.data.data.records ?? []
     total.value = res.data.data.total ?? 0
   } else {
@@ -126,6 +138,4 @@ const fetchData = async () => {
 onMounted(() => {
   fetchData()
 })
-
 </script>
-
