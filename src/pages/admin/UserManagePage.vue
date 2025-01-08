@@ -1,5 +1,18 @@
 <template>
-  <button @click="toggleSortOrder">升序or降序</button>
+  <div class="container">
+    <button class="sort-button" @click="toggleSortOrder">升序or降序</button>
+  </div>
+  <a-form layout="inline" :model="searchParams" @finish="doSearch">
+    <a-form-item label="账号">
+      <a-input v-model:value="searchParams.userAccount" placeholder="输入账号" allow-clear/>
+    </a-form-item>
+    <a-form-item label="用户名">
+      <a-input v-model:value="searchParams.userName" placeholder="输入用户名" allow-clear/>
+    </a-form-item>
+    <a-form-item>
+      <a-button type="primary" html-type="submit">搜索</a-button>
+    </a-form-item>
+  </a-form>
 
   <div id="userManagePage">
     <a-table :columns="columns" :data-source="dataList"
@@ -87,6 +100,7 @@ const dataList = ref<API.UserVO[]>([])
 const total = ref(0)
 // ref这个变量如果要取值的话就要加 value 但是 reactive这个变量就不需要加value
 // 搜索条件 reactive适合用于对 对象内的数据进行监控，在这里比如current和pageSize发生变化，我们就会进行数据的重新获取，只更新其中一个就会触发响应式更新
+// 以后各种搜索条件就都放在这里面，比如搜索条件，排序条件，分页条件等等
 const searchParams = reactive<API.UserQueryRequest>({
   current: 1,
   pageSize: 10,
@@ -134,8 +148,27 @@ const fetchData = async () => {
   }
 }
 
+// 获取数据
+const doSearch = () => {
+  // 重置页码  这个很重要，当然，第一次谁知道呀
+  searchParams.current = 1
+  fetchData()
+}
+
+
 // 页面加载时请求一次 onMounted是vue3生命周期中的钩子函数，它会在组件挂载后立即调用
 onMounted(() => {
   fetchData()
 })
 </script>
+
+<style>
+.container {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.sort-button {
+  margin-left: auto;
+}
+</style>
