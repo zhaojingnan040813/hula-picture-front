@@ -17,12 +17,13 @@
 
      <a-col flex="120px">
        <div class="user-login-status">
-         <div v-if="loginUserStore.loginUser.id">
-           {{loginUserStore.loginUser.userName??'无名'}}
-
-         </div >
-         <div v-else>
-           <a-button type="primary" href="/user/login">登录</a-button>
+         <div class="user-login-status">
+           <div v-if="loginUserStore.loginUser.id">
+             {{ loginUserStore.loginUser.userName ?? '无名' }}
+           </div>
+           <div v-else>
+             <a-button type="primary" href="/user/login">登录</a-button>
+           </div>
          </div>
        </div>
      </a-col>
