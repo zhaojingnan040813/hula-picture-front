@@ -18,12 +18,24 @@
      <a-col flex="120px">
        <div class="user-login-status">
          <div class="user-login-status">
+
            <div v-if="loginUserStore.loginUser.id">
-             {{ loginUserStore.loginUser.userName ?? '无名' }}
+             <a-dropdown>
+               <ASpace>
+                 <a-avatar :src="loginUserStore.loginUser.userAvatar" />
+                 {{ loginUserStore.loginUser.userName ?? '无名' }}
+               </ASpace>
+               <template #overlay>
+                 <a-menu>
+                   <a-menu-item @click="doLogout">
+                     <LogoutOutlined/>
+                     退出登录
+                   </a-menu-item>
+                 </a-menu>
+               </template>
+             </a-dropdown>
            </div>
-           <div v-else>
-             <a-button type="primary" href="/user/login">登录</a-button>
-           </div>
+
          </div>
        </div>
      </a-col>
@@ -37,11 +49,32 @@
 <script lang="ts" setup>
 import { h, ref } from 'vue';
 import { MailOutlined, AppstoreOutlined, SettingOutlined } from '@ant-design/icons-vue';
-import type { MenuProps } from 'ant-design-vue';
+import { HomeOutlined, LogoutOutlined } from '@ant-design/icons-vue'
+// message 是一个轻量级的弹窗提示
+import { type MenuProps, message } from 'ant-design-vue'
 import router from '@/router'
 import { useRoute } from 'vue-router'
 import { useLoginUserStore } from '@/stores/userLoginUserStore'
+import { userLogoutUsingPost } from '@/api/userController'
 // 这里报错了，我加了一个type就好了
+
+
+// 用户注销
+const doLogout = async () => {
+  const res = await userLogoutUsingPost()
+  console.log(res)
+  if (res.data.code === 0) {
+    loginUserStore.setLoginUser({
+      userName: '未登录',
+    })
+    message.success('退出登录成功')
+    await router.push('/user/login') // 这里的异步方法的 await可写可不写
+  } else {
+    message.error('退出登录失败，' + res.data.message)
+  }
+}
+
+
 
 // 有了这个，菜单栏里面点了以后就会出现路由跳转，地址导航栏会跟着变化，一般以后你有导航栏都要有这个
 const doMenuClick = (e: { key: string }) => {
@@ -63,10 +96,9 @@ const items = ref<MenuProps['items']>([
     title: '主页',
   },
   {
-    key: '/about',
-    icon: () => h(AppstoreOutlined),
-    label: '关于',
-    title: '关于',
+    key: '/admin/userManage',
+    label: '用户管理',
+    title: '用户管理',
   },
   {
     key: 'others',

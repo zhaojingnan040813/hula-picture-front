@@ -48,7 +48,7 @@ const handleSubmit = async (values: any) => {
     message.success('登录成功')
     await router.push({
       path: '/',
-      replace: true,
+      replace: true,//可以避免用户在登录后通过后退按钮再次看到登录页面。
     })
   } else {
     message.error('登录失败，' + res.data.message)
