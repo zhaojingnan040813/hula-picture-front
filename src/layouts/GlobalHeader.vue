@@ -82,6 +82,11 @@ const originItems = [
     title: '用户编辑',
   },
   {
+    key: '/add_picture',
+    label: '创建图片',
+    title: '创建图片',
+  },
+  {
     key: 'others',
     label: h('a', { href: 'https://www.codefather.cn', target: '_blank' }, 'Github主页'),
     title: '作者的Github主页',
