@@ -87,15 +87,16 @@ const originItems = [
     title: '创建图片',
   },
   {
-    key: 'others',
-    label: h('a', { href: 'https://www.codefather.cn', target: '_blank' }, 'Github主页'),
-    title: '作者的Github主页',
-  },
-  {
     key: '/admin/pictureManage',
     label: '图片管理',
     title: '图片管理',
+  },
+  {
+    key: 'others',
+    label: h('a', { href: 'https://www.codefather.cn', target: '_blank' }, 'Github主页'),
+    title: '作者的Github主页',
   }
+
 
 ]
 
