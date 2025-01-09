@@ -1,6 +1,8 @@
 <template>
   <div id="addPicturePage">
-    <h2 style="margin-bottom: 16px">创建图片</h2>
+    <h2 style="margin-bottom: 16px">
+      {{route.query?.id ? '编辑图片' : '添加图片'}}
+    </h2>
     <PictureUpload :picture="picture" :onSuccess="onSuccess" />
 
     <a-form v-if="picture" layout="vertical" :model="pictureForm" @finish="handleSubmit">
@@ -51,8 +53,13 @@
 
 import PictureUpload from '@/components/PictureUpload.vue'
 import { onMounted, reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { editPictureUsingPost } from '@/api/pictureController'
+import { useRoute, useRouter } from 'vue-router'
+import {
+  editPictureUsingPost,
+  getPictureVoByIdUsingGet,
+  listPictureTagCategoryUsingGet,
+  listPictureVoByPageUsingPost
+} from '@/api/pictureController'
 import { message } from 'ant-design-vue'
 
 const picture = ref<API.PictureVO>()
@@ -70,7 +77,7 @@ const router = useRouter()
  * @param values
  */
 const handleSubmit = async (values: any) => {
-  const pictureId = picture.value.id // 图片id是不能为空的呀
+  const pictureId = picture.value?.id // 图片id是不能为空的呀,所以value后面我没敢用问号
   if (!pictureId) {
     return
   }
@@ -81,7 +88,7 @@ const handleSubmit = async (values: any) => {
   if (res.data.code === 0 && res.data.data) {
     message.success('创建成功')
     // 跳转到图片详情页
-    router.push({
+    await router.push({
       path: `/picture/${pictureId}`,
     })
   } else {
@@ -97,6 +104,7 @@ const tagOptions = ref<string[]>([])
 // 获取标签和分类选项
 const getTagCategoryOptions = async () => {
   const res = await listPictureTagCategoryUsingGet()
+  // const res = await listPictureVoByPageUsingPost()
   if (res.data.code === 0 && res.data.data) {
     // 转换成下拉选项组件接受的格式
     tagOptions.value = (res.data.data.tagList ?? []).map((data: string) => {
@@ -115,6 +123,31 @@ const getTagCategoryOptions = async () => {
     message.error('加载选项失败，' + res.data.message)
   }
 }
+
+const route = useRoute()
+// 获取老数据
+const getOldPicture = async () => {
+  // 获取数据
+  const id = route.query?.id // 因为在86行有一个路由的跳转
+  if (id) {
+    const res = await getPictureVoByIdUsingGet({
+      id: id,
+    })
+    if (res.data.code === 0 && res.data.data) {
+      const data = res.data.data
+      picture.value = data
+      pictureForm.name = data.name
+      pictureForm.introduction = data.introduction
+      pictureForm.category = data.category
+      pictureForm.tags = data.tags
+    }
+  }
+}
+
+onMounted(() => {
+  getOldPicture()
+})
+
 
 onMounted(() => {
   getTagCategoryOptions()
