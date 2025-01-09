@@ -69,8 +69,8 @@ const originItems = [
   },
   {
     key: 'others',
-    label: h('a', { href: 'https://www.codefather.cn', target: '_blank' }, '编程导航'),
-    title: '编程导航',
+    label: h('a', { href: 'https://www.codefather.cn', target: '_blank' }, 'Github主页'),
+    title: '作者的Github主页',
   },
 ]
 
