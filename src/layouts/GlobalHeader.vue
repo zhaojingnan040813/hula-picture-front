@@ -21,6 +21,7 @@
       <a-col flex="120px">
         <div class="user-login-status">
           <div v-if="loginUserStore.loginUser.id">
+
             <a-dropdown>
               <a-space>
                 <a-avatar :src="loginUserStore.loginUser.userAvatar" />
@@ -32,9 +33,16 @@
                     <LogoutOutlined />
                     退出登录
                   </a-menu-item>
+                  <a-menu-item @click="doMenuClick1" >
+                    个人中心
+                  </a-menu-item>
+
+
                 </a-menu>
               </template>
             </a-dropdown>
+
+
           </div>
           <div v-else>
             <a-button type="primary" href="/user/login">登录</a-button>
@@ -51,6 +59,7 @@ import { MenuProps, message } from 'ant-design-vue'
 import { useRouter } from 'vue-router'
 import { useLoginUserStore } from '@/stores/userLoginUserStore.ts'
 import { userLogoutUsingPost } from '@/api/userController.ts'
+import UserEditPage from '@/pages/admin/UserEditPage.vue'
 
 const loginUserStore = useLoginUserStore()
 
@@ -66,6 +75,11 @@ const originItems = [
     key: '/admin/userManage',
     label: '用户管理',
     title: '用户管理',
+  },
+  {
+    key: '/admin/edit',
+    label: '用户编辑',
+    title: '用户编辑',
   },
   {
     key: 'others',
@@ -107,6 +121,13 @@ const doMenuClick = ({ key }) => {
   })
 }
 
+// 路由跳转事件
+const doMenuClick1 = () => {
+  router.push({
+    path: '/admin/edit',
+  })
+}
+
 // 用户注销
 const doLogout = async () => {
   const res = await userLogoutUsingPost()
@@ -120,6 +141,7 @@ const doLogout = async () => {
     message.error('退出登录失败，' + res.data.message)
   }
 }
+
 </script>
 
 <style scoped>
