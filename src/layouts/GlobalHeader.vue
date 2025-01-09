@@ -1,97 +1,64 @@
 <template>
-<!-- 原本外面没有这个 div ，这里加上了是为了整体控制样式  -->
-
-   <a-row>
-     <a-col flex="200px">
-       <RouterLink to="/">
-         <div class="title-bar">
-           <img class="logo" src="../assets/favicon.ico" alt="logo" width="50" height="50" />
-           <div class="title">呼啦云图库</div>
-         </div>
-       </RouterLink>
-     </a-col>
-
-     <a-col flex="auto">
-       <a-menu v-model:selectedKeys="current" mode="horizontal" :items="items" @click="doMenuClick" />
-     </a-col>
-
-     <a-col flex="120px">
-       <div class="user-login-status">
-         <div class="user-login-status">
-
-           <div v-if="loginUserStore.loginUser.id">
-             <a-dropdown>
-               <ASpace>
-                 <a-avatar :src="loginUserStore.loginUser.userAvatar" />
-                 {{ loginUserStore.loginUser.userName ?? '无名' }}
-               </ASpace>
-               <template #overlay>
-                 <a-menu>
-                   <a-menu-item @click="doLogout">
-                     <LogoutOutlined/>
-                     退出登录
-                   </a-menu-item>
-                 </a-menu>
-               </template>
-             </a-dropdown>
-           </div>
-
-         </div>
-       </div>
-     </a-col>
-   </a-row>
-
-
-
-
-
+  <div id="globalHeader">
+    <a-row :wrap="false">
+      <a-col flex="200px">
+        <router-link to="/">
+          <div class="title-bar">
+            <img class="logo" src="../assets/favicon.ico" alt="logo" />
+            <div class="title">鱼皮云图库</div>
+          </div>
+        </router-link>
+      </a-col>
+      <a-col flex="auto">
+        <a-menu
+          v-model:selectedKeys="current"
+          mode="horizontal"
+          :items="items"
+          @click="doMenuClick"
+        />
+      </a-col>
+      <!-- 用户信息展示栏 -->
+      <a-col flex="120px">
+        <div class="user-login-status">
+          <div v-if="loginUserStore.loginUser.id">
+            <a-dropdown>
+              <a-space>
+                <a-avatar :src="loginUserStore.loginUser.userAvatar" />
+                {{ loginUserStore.loginUser.userName ?? '无名' }}
+              </a-space>
+              <template #overlay>
+                <a-menu>
+                  <a-menu-item @click="doLogout">
+                    <LogoutOutlined />
+                    退出登录
+                  </a-menu-item>
+                </a-menu>
+              </template>
+            </a-dropdown>
+          </div>
+          <div v-else>
+            <a-button type="primary" href="/user/login">登录</a-button>
+          </div>
+        </div>
+      </a-col>
+    </a-row>
+  </div>
 </template>
 <script lang="ts" setup>
-import { h, ref } from 'vue';
-import { MailOutlined, AppstoreOutlined, SettingOutlined } from '@ant-design/icons-vue';
+import { computed, h, ref } from 'vue'
 import { HomeOutlined, LogoutOutlined } from '@ant-design/icons-vue'
-// message 是一个轻量级的弹窗提示
-import { type MenuProps, message } from 'ant-design-vue'
-import router from '@/router'
-import { useRoute } from 'vue-router'
-import { useLoginUserStore } from '@/stores/userLoginUserStore'
-import { userLogoutUsingPost } from '@/api/userController'
-// 这里报错了，我加了一个type就好了
+import { MenuProps, message } from 'ant-design-vue'
+import { useRouter } from 'vue-router'
+import { useLoginUserStore } from '@/stores/userLoginUserStore.ts'
+import { userLogoutUsingPost } from '@/api/userController.ts'
 
+const loginUserStore = useLoginUserStore()
 
-// 用户注销
-const doLogout = async () => {
-  const res = await userLogoutUsingPost()
-  console.log(res)
-  if (res.data.code === 0) {
-    loginUserStore.setLoginUser({
-      userName: '未登录',
-    })
-    message.success('退出登录成功')
-    await router.push('/user/login') // 这里的异步方法的 await可写可不写
-  } else {
-    message.error('退出登录失败，' + res.data.message)
-  }
-}
-
-
-
-// 有了这个，菜单栏里面点了以后就会出现路由跳转，地址导航栏会跟着变化，一般以后你有导航栏都要有这个
-const doMenuClick = (e: { key: string }) => {
-  router.push({
-    path: e.key
-  })
-};
-const route = useRoute()
-const current = ref<string[]>([route.path]);
-router.afterEach((to,from,next) => {
-  current.value = [to.path]//把当前的高亮路由地址赋值给current, current 就是用于高亮的
-})
-
-const items = ref<MenuProps['items']>([
+// 未经过滤的菜单项
+const originItems = [
   {
     key: '/',
-    icon: () => h(MailOutlined),
+    icon: () => h(HomeOutlined),
     label: '主页',
     title: '主页',
   },
@@ -102,56 +69,61 @@ const items = ref<MenuProps['items']>([
   },
   {
     key: 'others',
-    icon: () => h(SettingOutlined),
-    label: '其他',
-    title: '其他',
-    children: [
-      {
-        type: 'group',
-        label: 'Item 1',
-        children: [
-          {
-            label: 'Option 1',
-            key: 'setting:1',
-          },
-          {
-            label: 'Option 2',
-            key: 'setting:2',
-          },
-        ],
-      },
-      {
-        type: 'group',
-        label: 'Item 2',
-        children: [
-          {
-            label: 'Option 3',
-            key: 'setting:3',
-          },
-          {
-            label: 'Option 4',
-            key: 'setting:4',
-          },
-        ],
-      },
-    ],
+    label: h('a', { href: 'https://www.codefather.cn', target: '_blank' }, '编程导航'),
+    title: '编程导航',
   },
-  {
-    key: 'other',
-    label: h('a', { href: 'https://github.com/zhaojingnan040813', target: '_blank' }, '我的主页'),
-    title: '作者的Github主页',
-  },
-]);
+]
 
-const loginUserStore = useLoginUserStore()
-loginUserStore.fetchLoginUser()
+// 根据权限过滤菜单项
+//其中每个元素都是一个对象，包含 key、icon、label、title 等属性，这与 MenuProps['items'] 定义的结构相匹配
+const filterMenus = (menus = [] as MenuProps['items']) => {
+  return menus?.filter((menu) => {
+    // 管理员才能看到 /admin 开头的菜单
+    if (menu?.key?.startsWith('/admin')) {
+      const loginUser = loginUserStore.loginUser
+      if (!loginUser || loginUser.userRole !== 'admin') {
+        return false
+      }
+    }
+    return true
+  })
+}
 
+// 展示在菜单的路由数组
+const items = computed(() => filterMenus(originItems))
 
+const router = useRouter()
+// 当前要高亮的菜单项
+const current = ref<string[]>([])
+// 监听路由变化，更新高亮菜单项
+router.afterEach((to, from, next) => {
+  current.value = [to.path]
+})
 
+// 路由跳转事件
+const doMenuClick = ({ key }) => {
+  router.push({
+    path: key,
+  })
+}
+
+// 用户注销
+const doLogout = async () => {
+  const res = await userLogoutUsingPost()
+  if (res.data.code === 0) {
+    loginUserStore.setLoginUser({
+      userName: '未登录',
+    })
+    message.success('退出登录成功')
+    await router.push('/user/login')
+  } else {
+    message.error('退出登录失败，' + res.data.message)
+  }
+}
 </script>
 
 <style scoped>
-.title-bar {
+#globalHeader .title-bar {
   display: flex;
   align-items: center;
 }
@@ -166,5 +138,3 @@ loginUserStore.fetchLoginUser()
   height: 48px;
 }
 </style>
-
-

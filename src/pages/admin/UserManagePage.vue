@@ -43,7 +43,7 @@
 <!--        </template>-->
 
         <template v-else-if="column.key === 'action'">
-          <a-button danger>删除</a-button>
+          <a-button danger @click="doDelete(record.id)">删除</a-button>
         </template>
       </template>
     </a-table>
@@ -51,7 +51,7 @@
 </template>
 <script lang="ts" setup>
 import { computed, onMounted, reactive, ref } from 'vue'
-import { listUserVoByPageUsingPost } from '@/api/userController'
+import { deleteUserUsingPost, listUserVoByPageUsingPost } from '@/api/userController'
 import { message } from 'ant-design-vue'
 import dayjs from 'dayjs'
 
@@ -103,7 +103,7 @@ const total = ref(0)
 // 以后各种搜索条件就都放在这里面，比如搜索条件，排序条件，分页条件等等
 const searchParams = reactive<API.UserQueryRequest>({
   current: 1,
-  pageSize: 10,
+  pageSize: 5,
   sortField: 'createTime',
   sortOrder: 'ascend', // 可以取ascend或者descend
 })
@@ -154,6 +154,22 @@ const doSearch = () => {
   searchParams.current = 1
   fetchData()
 }
+
+// 删除数据
+const doDelete = async (id: string) => {
+  if (!id) {
+    return
+  }
+  const res = await deleteUserUsingPost({ id })
+  if (res.data.code === 0) {
+    message.success('删除成功')
+    // 刷新数据
+    fetchData()
+  } else {
+    message.error('删除失败')
+  }
+}
+
 
 
 // 页面加载时请求一次 onMounted是vue3生命周期中的钩子函数，它会在组件挂载后立即调用
