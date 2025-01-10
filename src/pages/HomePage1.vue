@@ -10,10 +10,13 @@
         @search="doSearch"
       />
     </div>
-    <!-- 分类和标签筛选 -->
-    <a-tabs v-model:active-key="selectedCategory" @change="doSearch">
+
+
+    <!-- 分类 + 标签 -->
+<!-- activeKey 就是选中的分类  每一个tab一定要指定一个key ,是通过它来判断是否高亮的   -->
+    <a-tabs v-model:activeKey="selectedCategory" @change="doSearch">
       <a-tab-pane key="all" tab="全部" />
-      <a-tab-pane v-for="category in categoryList" :tab="category" :key="category" />
+      <a-tab-pane v-for="category in categoryList" :key="category" :tab="category" />
     </a-tabs>
     <div class="tag-bar">
       <span style="margin-right: 8px">标签：</span>
@@ -67,31 +70,45 @@
 
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
-import {
-  listPictureTagCategoryUsingGet,
-  listPictureVoByPageUsingPost,
-} from '@/api/pictureController.ts'
+import { listPictureTagCategoryUsingGet, listPictureVoByPageUsingPost } from '@/api/pictureController'
 import { message } from 'ant-design-vue'
-import { useRouter } from 'vue-router' // 定义数据
+import { useRouter } from 'vue-router'
 
-// 定义数据
 const dataList = ref<API.PictureVO[]>([])
+
+// 数据
 const total = ref(0)
 const loading = ref(true)
 
 // 搜索条件
 const searchParams = reactive<API.PictureQueryRequest>({
   current: 1,
-  pageSize: 12,
+  pageSize: 12, // 每页显示的数量,因为12是3和4的倍数，虽然我也是不理解
   sortField: 'createTime',
   sortOrder: 'descend',
+})
+
+// 分页参数 这里没必要带默认值
+const pagination = computed(() => {
+  return {
+    current: searchParams.current ?? 1,
+    pageSize: searchParams.pageSize ?? 10,
+    total: total.value,
+    // 切换页号时，会修改搜索参数并获取数据
+    onChange: (page: number, pageSize: number) => {
+      searchParams.current = page
+      searchParams.pageSize = pageSize
+      fetchData()
+    },
+    // 显示总条数给移除了，没必要给用户看到
+  }
 })
 
 // 获取数据
 const fetchData = async () => {
   loading.value = true
-  // 转换搜索参数
-  const params = {
+ // 转换搜索参数
+  const params={
     ...searchParams,
     tags: [] as string[],
   }
@@ -119,32 +136,17 @@ onMounted(() => {
   fetchData()
 })
 
-// 分页参数
-const pagination = computed(() => {
-  return {
-    current: searchParams.current,
-    pageSize: searchParams.pageSize,
-    total: total.value,
-    onChange: (page: number, pageSize: number) => {
-      searchParams.current = page
-      searchParams.pageSize = pageSize
-      fetchData()
-    },
-  }
-})
-
-// 搜索
 const doSearch = () => {
   // 重置搜索条件
   searchParams.current = 1
   fetchData()
 }
 
-// 标签和分类列表
+
 const categoryList = ref<string[]>([])
-const selectedCategory = ref<string>('all')
+const selectedCategory = ref<string>('all')//视频中讲到了为什么还要有这个
 const tagList = ref<string[]>([])
-const selectedTagList = ref<boolean[]>([])
+const selectedTagList = ref<boolean[]>([])//分类只能选一个，但是标签是可以选多个的,为什么用boolean数组而不是String
 
 /**
  * 获取标签和分类选项

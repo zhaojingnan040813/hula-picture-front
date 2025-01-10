@@ -120,7 +120,7 @@ const getTagCategoryOptions = async () => {
       }
     })
   } else {
-    message.error('加载选项失败，' + res.data.message)
+    message.error('获取标签列表失败' + res.data.message)
   }
 }
 
