@@ -3,8 +3,19 @@
     <h2 style="margin-bottom: 16px">
       {{route.query?.id ? '编辑图片' : '添加图片'}}
     </h2>
-    <PictureUpload :picture="picture" :onSuccess="onSuccess" />
+    <!-- 选择上传方式 -->
+    <a-tabs v-model:activeKey="uploadType"
+    >>
+      <a-tab-pane key="file" tab="文件上传">
+        <PictureUpload :picture="picture" :onSuccess="onSuccess" />
+      </a-tab-pane>
+      <a-tab-pane key="url" tab="URL 上传" force-render>
+        <UrlPictureUpload :picture="picture" :onSuccess="onSuccess" />
+      </a-tab-pane>
+    </a-tabs>
 
+
+<!--  图片信息表单   -->
     <a-form v-if="picture" layout="vertical" :model="pictureForm" @finish="handleSubmit">
 <!--   form 表单一定要有name属性   -->
       <a-form-item label="名称" name="name">
@@ -61,6 +72,7 @@ import {
   listPictureVoByPageUsingPost
 } from '@/api/pictureController'
 import { message } from 'ant-design-vue'
+import UrlPictureUpload from '@/components/UrlPictureUpload.vue'
 
 const picture = ref<API.PictureVO>()
 const onSuccess = (newPicture: API.PictureVO) => {
@@ -143,6 +155,9 @@ const getOldPicture = async () => {
     }
   }
 }
+
+const uploadType = ref<'file' | 'url'>('file')
+
 
 onMounted(() => {
   getOldPicture()
