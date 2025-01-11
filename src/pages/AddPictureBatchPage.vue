@@ -24,11 +24,34 @@
           allow-clear
         />
       </a-form-item>
+      <a-form-item name="category" label="种类">
+        <a-select
+          v-model:value="formData.category"
+          placeholder="请输入种类。这是唯一的标识，不允许重复。"
+          allow-clear
+          :options="categoryOptions"
+
+        />
+
+      </a-form-item>
+
+      <a-form-item name="category" label="标签">
+        <a-select
+          v-model:value="formData.tags"
+          placeholder="标签可以有多个，除了下面的标签外，还可以自定义标签。"
+          allow-clear
+          :options="tagOptions"
+        />
+      </a-form-item>
       <a-form-item>
         <a-button type="primary" html-type="submit" style="width: 100%" :loading="loading">
           执行任务
         </a-button>
       </a-form-item>
+
+
+
+
     </a-form>
   </div>
 </template>
@@ -58,7 +81,7 @@ const router = useRouter()
 const handleSubmit = async (values: any) => {
   loading.value = true
   const res = await uploadPictureByBatchUsingPost({
-    ...formData,
+    ...values,//values 是从表单中提取的用户输入的值，而 formData 是一个响应式对象，它包含了表单的初始数据和用户输入的值。
   })
   // 操作成功
   if (res.data.code === 0 && res.data.data) {
@@ -72,6 +95,38 @@ const handleSubmit = async (values: any) => {
   }
   loading.value = false
 }
+
+
+const categoryOptions = ref<string[]>([])
+const tagOptions = ref<string[]>([])
+
+// 获取标签和分类选项
+const getTagCategoryOptions = async () => {
+  const res = await listPictureTagCategoryUsingGet()
+  // const res = await listPictureVoByPageUsingPost()
+  if (res.data.code === 0 && res.data.data) {
+    // 转换成下拉选项组件接受的格式
+    tagOptions.value = (res.data.data.tagList ?? []).map((data: string) => {
+      return {
+        value: data,
+        label: data,
+      }
+    })
+    categoryOptions.value = (res.data.data.categoryList ?? []).map((data: string) => {
+      return {
+        value: data,
+        label: data,
+      }
+    })
+  } else {
+    message.error('获取标签列表失败' + res.data.message)
+  }
+}
+
+onMounted(() => {
+  getTagCategoryOptions()
+})
+
 </script>
 
 <style scoped>

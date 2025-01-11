@@ -209,15 +209,19 @@ declare namespace API {
   }
 
   type PictureUploadByBatchRequest = {
+    category?: string
     count?: number
     namePrefix?: string
     searchText?: string
+    tags?: string[]
   }
 
   type PictureUploadRequest = {
+    category?: string
     fileUrl?: string
     id?: number
     picName?: string
+    tags?: string[]
   }
 
   type PictureVO = {
@@ -245,9 +249,11 @@ declare namespace API {
   }
 
   type uploadPictureUsingPOSTParams = {
+    category?: string
     fileUrl?: string
     id?: number
     picName?: string
+    tags?: string[]
   }
 
   type User = {
