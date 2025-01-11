@@ -5,7 +5,7 @@
         <router-link to="/">
           <div class="title-bar">
             <img class="logo" src="../assets/favicon.ico" alt="logo" />
-            <div class="title">云图库</div>
+            <div class="title"> Sky 云图库</div>
           </div>
         </router-link>
       </a-col>
@@ -76,11 +76,11 @@ const originItems = [
     label: '用户管理',
     title: '用户管理',
   },
-  {
-    key: '/admin/edit',
-    label: '用户编辑',
-    title: '用户编辑',
-  },
+  // {
+  //   key: '/admin/edit',
+  //   label: '用户编辑',
+  //   title: '用户编辑',
+  // },
   {
     key: '/add_picture',
     label: '创建图片',
