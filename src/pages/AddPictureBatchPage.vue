@@ -35,12 +35,13 @@
 
       </a-form-item>
 
-      <a-form-item name="category" label="标签">
+      <a-form-item name="tags" label="标签">
         <a-select
           v-model:value="formData.tags"
           placeholder="标签可以有多个，除了下面的标签外，还可以自定义标签。"
           allow-clear
           :options="tagOptions"
+          mode="tags"
         />
       </a-form-item>
       <a-form-item>

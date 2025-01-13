@@ -69,8 +69,8 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import {
   listPictureTagCategoryUsingGet,
-  listPictureVoByPageUsingPost,
-} from '@/api/pictureController.ts'
+  listPictureVoByPageUsingPost, listPictureVoByPageWithCacheUsingPost
+} from '@/api/pictureController'
 import { message } from 'ant-design-vue'
 import { useRouter } from 'vue-router' // 定义数据
 

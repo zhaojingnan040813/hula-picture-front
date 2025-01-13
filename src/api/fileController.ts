@@ -48,6 +48,7 @@ export async function testUploadFileUsingPost(
   return request<API.BaseResponseString_>('/api/file/test/upload', {
     method: 'POST',
     data: formData,
+    // @ts-ignore
     requestType: 'form',
     ...(options || {}),
   })

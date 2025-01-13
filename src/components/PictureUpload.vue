@@ -34,6 +34,7 @@ const props = defineProps<Props>()
 
 const imageUrl = ref<string>('');
 
+// @ts-ignore
 const beforeUpload = (file: UploadProps['fileList'][number]) => {
   const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
   if (!isJpgOrPng) {
@@ -57,10 +58,14 @@ const loading = ref<boolean>(false)
  * 上传
  * @param file
  */
+/**
+ * 上传图片
+ * @param file
+ */
 const handleUpload = async ({ file }: any) => {
   loading.value = true
   try {
-    const params = props.picture ? { id: props.picture.id } : {};
+    const params = props.picture ? { id: props.picture.id } : {}
     const res = await uploadPictureUsingPost(params, {}, file)
     if (res.data.code === 0 && res.data.data) {
       message.success('图片上传成功')
