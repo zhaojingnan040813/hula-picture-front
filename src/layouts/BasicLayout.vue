@@ -6,10 +6,21 @@
         <GlobalHeader/>
       </a-layout-header>
 
-      <a-layout-content class="content" >
-<!-- 这个router-view是框架里面的       -->
-        <router-view />
-      </a-layout-content>
+
+
+
+      <a-layout>
+<!-- 我不理解这个class有什么用  -->
+        <GlobalSider class="sider"/>
+        <a-layout-content class="content" >
+          <!-- 这个router-view是框架里面的       -->
+          <router-view />
+        </a-layout-content>
+
+      </a-layout>
+
+
+
 
       <a-layout-footer class="footer">
         <a href="https://github.com/zhaojingnan040813" target="_blank">
@@ -23,6 +34,7 @@
 
 <script setup lang="ts">
 import GlobalHeader from '@/layouts/GlobalHeader.vue'
+import GlobalSider from '@/components/GlobalSider.vue'
 </script>
 
 <style scoped>

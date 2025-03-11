@@ -16,27 +16,37 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { message } from 'ant-design-vue'
-import { uploadPictureByUrlUsingPost } from '@/api/pictureController.ts'
+import { uploadPictureByUrlUsingPost } from '@/api/pictureController'
+import { useRoute, useRouter } from 'vue-router'
 
 interface Props {
   picture?: API.PictureVO
+  spaceId?: number
   onSuccess?: (newPicture: API.PictureVO) => void
 }
+const router = useRouter()
+const route = useRoute()
 
 const props = defineProps<Props>()
 const fileUrl = ref<string>()
 const loading = ref<boolean>(false)
-
+const spaceId=computed(()=>{
+  return route.query?.spaceId
+})
 /**
  * 上传图片
  * @param file
  */
 const handleUpload = async () => {
   loading.value = true
+  console.log('Received spaceId:', props.spaceId) // 🛠️ 调试用 确诊了，就是因为这里拿不到spaceId,导致无法把图片上传到个人空间里面
   try {
+    //实际上我们只需要fileUrl 和 spaceId这两个参数
     const params: API.PictureUploadRequest = { fileUrl: fileUrl.value }
+    params.spaceId = props.spaceId;
+
     if (props.picture) {
       params.id = props.picture.id
     }
