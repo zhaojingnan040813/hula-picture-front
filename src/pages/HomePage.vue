@@ -28,20 +28,26 @@
         </a-checkable-tag>
       </a-space>
     </div>
-    <!-- 图片列表（奶奶的，我刚刚因为这个组件爆黄了，没有导入，然后就导致图片显示不出来） -->
+    <!-- 图片列表 -->
     <PictureList :dataList="dataList" :loading="loading" />
-
+    <!-- 分页 -->
+    <a-pagination
+      style="text-align: right"
+      v-model:current="searchParams.current"
+      v-model:pageSize="searchParams.pageSize"
+      :total="total"
+      @change="onPageChange"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import {
   listPictureTagCategoryUsingGet,
-  listPictureVoByPageUsingPost, listPictureVoByPageWithCacheUsingPost
-} from '@/api/pictureController'
+  listPictureVoByPageUsingPost,
+} from '@/api/pictureController.ts'
 import { message } from 'ant-design-vue'
-import { useRouter } from 'vue-router'
 import PictureList from '@/components/PictureList.vue' // 定义数据
 
 // 定义数据
@@ -52,7 +58,7 @@ const loading = ref(true)
 // 搜索条件
 const searchParams = reactive<API.PictureQueryRequest>({
   current: 1,
-  pageSize: 15,
+  pageSize: 12,
   sortField: 'createTime',
   sortOrder: 'descend',
 })
@@ -90,18 +96,11 @@ onMounted(() => {
 })
 
 // 分页参数
-const pagination = computed(() => {
-  return {
-    current: searchParams.current,
-    pageSize: searchParams.pageSize,
-    total: total.value,
-    onChange: (page: number, pageSize: number) => {
-      searchParams.current = page
-      searchParams.pageSize = pageSize
-      fetchData()
-    },
-  }
-})
+const onPageChange = (page: number, pageSize: number) => {
+  searchParams.current = page
+  searchParams.pageSize = pageSize
+  fetchData()
+}
 
 // 搜索
 const doSearch = () => {
@@ -128,14 +127,6 @@ const getTagCategoryOptions = async () => {
   } else {
     message.error('获取标签分类列表失败，' + res.data.message)
   }
-}
-
-const router = useRouter()
-// 跳转至图片详情页
-const doClickPicture = (picture: API.PictureVO) => {
-  router.push({
-    path: `/picture/${picture.id}`,
-  })
 }
 
 onMounted(() => {

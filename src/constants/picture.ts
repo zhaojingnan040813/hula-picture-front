@@ -17,6 +17,7 @@ export const PIC_REVIEW_STATUS_MAP = {
   2: '拒绝',
 }
 
+
 /**
  * 图片审核下拉表单选项
  */
@@ -26,5 +27,6 @@ export const PIC_REVIEW_STATUS_OPTIONS = Object.keys(PIC_REVIEW_STATUS_MAP).map(
     value: key,
   }
 })
+
 
 

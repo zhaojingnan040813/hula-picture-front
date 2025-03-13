@@ -47,6 +47,7 @@ import GlobalSider from '@/components/GlobalSider.vue'
 }
 
 
+
 #basicLayout .footer {
   background: #efefef;
   padding: 16px;

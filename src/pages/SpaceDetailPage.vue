@@ -19,6 +19,11 @@
       </a-space>
     </a-flex>
     <div style="margin-bottom: 16px" />
+
+<!--    <picture-search-form/>-->
+    <PictureSearchForm :on-search="onSearch"/>
+<!-- 在这里添加一定的上下间距   -->
+    <div style="margin: 16px 0" />
     <!-- 图片列表，这里冒号后面的是传递给子组件的属性-->
     <PictureList :dataList="dataList" :loading="loading" :showOp="true" :onReload="fetchData" />
     <!-- 分页 -->
@@ -39,12 +44,14 @@ import { message } from 'ant-design-vue'
 import { listPictureVoByPageUsingPost } from '@/api/pictureController.ts'
 import { formatSize } from '@/utils'
 import PictureList from '@/components/PictureList.vue'
+import PictureSearchForm from '@/components/PictureSearchForm.vue'
 
 interface Props {
   id: string | number
 }
 
 const props = defineProps<Props>()
+
 const space = ref<API.SpaceVO>({})
 
 // -------- 获取空间详情 --------
@@ -75,7 +82,7 @@ const total = ref(0)
 const loading = ref(true)
 
 // 搜索条件
-const searchParams = reactive<API.PictureQueryRequest>({
+const searchParams = ref<API.PictureQueryRequest>({
   current: 1,
   pageSize: 12,
   sortField: 'createTime',
@@ -88,7 +95,7 @@ const fetchData = async () => {
   // 转换搜索参数
   const params = {
     spaceId: props.id,
-    ...searchParams,
+    ...searchParams.value,
   }
   const res = await listPictureVoByPageUsingPost(params)
   if (res.data.code === 0 && res.data.data) {
@@ -107,8 +114,21 @@ onMounted(() => {
 
 // 分页参数
 const onPageChange = (page: number, pageSize: number) => {
-  searchParams.current = page
-  searchParams.pageSize = pageSize
+  searchParams.value.current = page
+  searchParams.value.pageSize = pageSize
+  fetchData()
+}
+
+// 搜索
+const onSearch = (newSearchParams: API.PictureQueryRequest) => {
+  // console.log('new', newSearchParams)
+
+  searchParams.value = {
+    ...searchParams.value,
+    ...newSearchParams,
+    current: 1,
+  }
+  // console.log('searchparams', searchParams.value)
   fetchData()
 }
 </script>
