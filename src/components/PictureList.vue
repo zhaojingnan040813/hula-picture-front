@@ -31,16 +31,20 @@
             </a-card-meta>
 
             <template v-if="showOp" #actions>
-              <a-space @click="(e:any) => doEdit(picture, e)">
+              <a-space @click="(e: any) => doSearch(picture, e)">
+                <search-outlined />
+                搜索
+              </a-space>
+
+              <a-space @click="(e: any) => doEdit(picture, e)">
                 <EditOutlined />
                 编辑
               </a-space>
-              <a-space @click="(e:any) => doDelete(picture, e)">
+              <a-space @click="(e: any) => doDelete(picture, e)">
                 <DeleteOutlined />
                 删除
               </a-space>
             </template>
-
           </a-card>
         </a-list-item>
       </template>
@@ -50,7 +54,7 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons-vue'
+import { DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
 import { deletePictureUsingPost } from '@/api/pictureController'
 
@@ -60,6 +64,7 @@ interface Props {
   showOp?: boolean
   onReload?: () => void
 }
+
 // `withDefaults`的作用是为TypeScript类型的props提供默认值，
 // 确保类型安全和正确的默认行为，特别是在处理引用类型时，避免共享引用
 // 导致的问题。
@@ -78,7 +83,7 @@ const doClickPicture = (picture: API.PictureVO) => {
 }
 
 // 编辑
-const doEdit = (picture, e) => {
+const doEdit = (picture: API.Picture, e: any) => {
   // 阻止冒泡 这个是重点!!!! 我们是在子元素上面阻止冒泡还是父元素上面呢
   e.stopPropagation()
   // 跳转时一定要携带 spaceId
@@ -92,7 +97,7 @@ const doEdit = (picture, e) => {
 }
 
 // 删除数据
-const doDelete = async (picture, e) => {
+const doDelete = async (picture: API.Picture, e: any) => {
   // 阻止冒泡
   e.stopPropagation()
   const id = picture.id
@@ -107,6 +112,14 @@ const doDelete = async (picture, e) => {
     message.error('删除失败')
   }
 }
+
+// 搜索
+const doSearch = (picture : API.Picture, e : any) => {
+  e.stopPropagation()
+  window.open(`/search_picture?pictureId=${picture.id}`)
+}
+
+
 </script>
 
 <style scoped></style>
