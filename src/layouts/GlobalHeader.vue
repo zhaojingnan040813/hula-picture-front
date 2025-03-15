@@ -5,7 +5,7 @@
         <router-link to="/">
           <div class="title-bar">
             <img class="logo" src="https://picture-1326939213.cos.ap-beijing.myqcloud.com//public/1876896441237168130/2025-01-11_M41CyOwzMXn0YX6N.jpg" alt="logo" />
-            <div class="title"> Sky 云图库</div>
+            <div class="title"> 云图库</div>
           </div>
         </router-link>
       </a-col>

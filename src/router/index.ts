@@ -13,6 +13,8 @@ import AddSpacePage from '@/pages/AddSpacePage.vue'
 import MySpacePage from '@/pages/MySpacePage.vue'
 import SpaceDetailPage from '@/pages/SpaceDetailPage.vue'
 import SearchPicturePage from '@/pages/SearchPicturePage.vue'
+import CollectionPage from '@/pages/CollectionPage.vue'
+import FindMePage from '@/components/FindMePage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -98,6 +100,27 @@ const router = createRouter({
       name: '图片搜索',
       component: SearchPicturePage,
     },
+  //   我的收藏路由
+    {
+      path : '/collection',
+      name : '我的收藏',
+      component : CollectionPage,
+    },
+    {
+      path:'/practice',
+      name:'练习',
+      component:()=>import('@/pages/PracticePage.vue')
+    },
+    {
+      path: '/diary',
+      name: '日记',
+      component: () => import('@/pages/DiaryPage.vue')
+    },
+    {
+      path: '/find_me',
+      name: '找我',
+      component: FindMePage
+    }
 
 
 

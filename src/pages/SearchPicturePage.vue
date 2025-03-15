@@ -27,15 +27,17 @@
         <a-list-item style="padding: 0">
           <a :href="picture.fromUrl" target="_blank">
             <!-- 单张图片 -->
-            <a-card hoverable>
-              <template #cover>
-                <img
-                  :alt="picture.name"
-                  :src="picture.thumbUrl"
-                  style="height: 180px; object-fit: cover"
-                />
-              </template>
-            </a-card>
+            <a-tooltip title="点击图片跳转到图片来源地址" placement="top">
+              <a-card hoverable>
+                <template #cover>
+                  <img
+                    :alt="picture.name"
+                    :src="picture.thumbUrl"
+                    style="height: 180px; object-fit: cover"
+                  />
+                </template>
+              </a-card>
+            </a-tooltip>
           </a>
         </a-list-item>
 
@@ -43,6 +45,7 @@
 
 
     </a-list>
+
   </div>
 </template>
 

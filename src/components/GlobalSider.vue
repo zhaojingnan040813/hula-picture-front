@@ -1,35 +1,32 @@
 <template>
-
   <div id="globalSider">
-    <a-layout-sider
-      class="sider"
-      v-if="loginUserStore.loginUser.id"
-      breakpoint="lg"
-      width="200">
-
+    <a-layout-sider class="sider" v-if="loginUserStore.loginUser.id" breakpoint="lg" width="200">
       <a-menu
         mode="inline"
         v-model:selectedKeys="current"
         :items="menuItems"
         @click="doMenuClick"
-
       />
     </a-layout-sider>
   </div>
-
-
 </template>
 <script lang="ts" setup>
-
 // 菜单列表
 import { h, ref } from 'vue'
 import { useRouter } from 'vue-router'
 //
-import { PictureOutlined, UserOutlined } from '@ant-design/icons-vue'
+import {
+  PictureOutlined,
+  UserOutlined,
+  StarOutlined,
+  HeartOutlined,
+  StarTwoTone,
+  TeamOutlined,
+  FolderOpenOutlined
+} from '@ant-design/icons-vue'
 import { useLoginUserStore } from '@/stores/userLoginUserStore'
 
 const loginUserStore = useLoginUserStore()
-
 
 const menuItems = [
   {
@@ -41,6 +38,29 @@ const menuItems = [
     key: '/my_space',
     label: '我的空间',
     icon: () => h(UserOutlined),
+  },
+  {
+    key: '/collection',
+    label: '我的收藏',
+    icon: () => h(StarOutlined),
+  },
+  //  刷题的列表
+  {
+    key: '/practice',
+    label: '刷题',
+    icon: () => h(HeartOutlined),
+  },
+  //   我的日记
+  {
+    key: '/diary',
+    label: '我的日记',
+    icon: () => h(FolderOpenOutlined),
+  },
+  // 找到我的各种方式
+  {
+    key: '/find_me',
+    label: '找到我',
+    icon: () => h(TeamOutlined),
   },
 ]
 
@@ -59,8 +79,6 @@ const doMenuClick = ({ key }: { key: string }) => {
     path: key,
   })
 }
-
-
 </script>
 
 <style scoped>

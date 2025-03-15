@@ -20,11 +20,9 @@
       </a-layout>
 
 
-
-
       <a-layout-footer class="footer">
         <a href="https://github.com/zhaojingnan040813" target="_blank">
-          作者 By 呼啦
+         求求给个star吧
         </a>
       </a-layout-footer>
 
@@ -63,6 +61,27 @@ import GlobalSider from '@/components/GlobalSider.vue'
   margin-bottom: 28px;
   padding: 20px;
 }
+
+
+
+.footer-card {
+  width: 200px;
+  cursor: pointer;
+  transition: all 0.3s;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+}
+
+.footer {
+  /* 修改原有定位为相对定位 */
+  position: relative;
+  /* 其他样式保持不变... */
+}
+
+
 
 
 </style>
