@@ -312,6 +312,7 @@ declare namespace API {
     id?: number
     introduction?: string
     name?: string
+    picColor?: string
     picFormat?: string
     picHeight?: number
     picScale?: number
@@ -342,7 +343,6 @@ declare namespace API {
     isDelete?: number
     maxCount?: number
     maxSize?: number
-    picColor?: string
     spaceLevel?: number
     spaceName?: string
     totalCount?: number
@@ -393,7 +393,6 @@ declare namespace API {
     id?: number
     maxCount?: number
     maxSize?: number
-    picColor?: string
     spaceLevel?: number
     spaceName?: string
     totalCount?: number

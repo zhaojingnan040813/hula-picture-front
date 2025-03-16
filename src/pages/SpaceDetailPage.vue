@@ -22,6 +22,14 @@
 
 <!--    <picture-search-form/>-->
     <PictureSearchForm :on-search="onSearch"/>
+
+
+    <div style="margin-bottom: 16px" />
+    <!-- 按颜色搜索，跟其他搜索条件独立 -->
+    <a-form-item label="按颜色搜索">
+      <color-picker format="hex" @pureColorChange="onColorChange" />
+    </a-form-item>
+
 <!-- 在这里添加一定的上下间距   -->
     <div style="margin: 16px 0" />
     <!-- 图片列表，这里冒号后面的是传递给子组件的属性-->
@@ -41,10 +49,11 @@
 import { onMounted, reactive, ref } from 'vue'
 import { getSpaceVoByIdUsingGet } from '@/api/spaceController.ts'
 import { message } from 'ant-design-vue'
-import { listPictureVoByPageUsingPost } from '@/api/pictureController.ts'
+import { listPictureVoByPageUsingPost, searchPictureByColorUsingPost } from '@/api/pictureController.ts'
 import { formatSize } from '@/utils'
 import PictureList from '@/components/PictureList.vue'
 import PictureSearchForm from '@/components/PictureSearchForm.vue'
+import { ColorPicker } from "vue3-colorpicker";
 
 interface Props {
   id: string | number
@@ -131,6 +140,24 @@ const onSearch = (newSearchParams: API.PictureQueryRequest) => {
   // console.log('searchparams', searchParams.value)
   fetchData()
 }
+
+// 按照颜色搜索
+const onColorChange = async (color: string) => {
+  loading.value = true
+  const res = await searchPictureByColorUsingPost({
+    picColor: color,
+    spaceId: props.id,
+  })
+  if (res.data.code === 0 && res.data.data) {
+    const data = res.data.data ?? []
+    dataList.value = data
+    total.value = data.length
+  } else {
+    message.error('获取数据失败，' + res.data.message)
+  }
+  loading.value = false
+}
+
 </script>
 
 <style scoped>
