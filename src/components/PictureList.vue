@@ -31,6 +31,10 @@
             </a-card-meta>
 
             <template v-if="showOp" #actions>
+              <a-space @click="(e: any) => doShare(picture, e)">
+                <share-alt-outlined />
+                分享
+              </a-space>
               <a-space @click="(e: any) => doSearch(picture, e)">
                 <search-outlined />
                 搜索
@@ -49,14 +53,22 @@
         </a-list-item>
       </template>
     </a-list>
+    <!-- 分享弹窗 -->
+    <ShareModal ref="shareModalRef" :link="shareLink" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons-vue'
+import {
+  DeleteOutlined,
+  EditOutlined,
+  SearchOutlined,
+  ShareAltOutlined,
+} from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
 import { deletePictureUsingPost } from '@/api/pictureController'
+import { ref } from 'vue'
 
 interface Props {
   dataList?: API.PictureVO[]
@@ -114,12 +126,24 @@ const doDelete = async (picture: API.Picture, e: any) => {
 }
 
 // 搜索
-const doSearch = (picture : API.Picture, e : any) => {
+const doSearch = (picture: API.Picture, e: any) => {
   e.stopPropagation()
   window.open(`/search_picture?pictureId=${picture.id}`)
 }
 
+// 分享弹窗引用
+const shareModalRef = ref()
+// 分享链接
+const shareLink = ref<string>()
 
+// 分享
+const doShare = (picture: API.PictureVO, e: Event) => {
+  e.stopPropagation()
+  shareLink.value = `${window.location.protocol}//${window.location.host}/picture/${picture.id}`
+  if (shareModalRef.value) {
+    shareModalRef.value.openModal()
+  }
+}
 </script>
 
 <style scoped></style>

@@ -53,15 +53,14 @@
                 <div
                   v-if="picture.picColor"
                   :style="{
-                  backgroundColor: toHexColor(picture.picColor),
-                  width: '16px',
-                  height: '16px',
-                }"
+                    backgroundColor: toHexColor(picture.picColor),
+                    width: '16px',
+                    height: '16px',
+                  }"
                 />
               </a-space>
             </a-descriptions-item>
           </a-descriptions>
-
 
           <!-- 图片操作 -->
           <a-space wrap>
@@ -71,6 +70,13 @@
                 <DownloadOutlined />
               </template>
             </a-button>
+            <a-button type="primary" ghost @click="doShare">
+              分享
+              <template #icon>
+                <share-alt-outlined />
+              </template>
+            </a-button>
+
             <a-button v-if="canEdit" :icon="h(EditOutlined)" type="default" @click="doEdit">
               编辑
             </a-button>
@@ -81,19 +87,24 @@
         </a-card>
       </a-col>
     </a-row>
+    <ShareModal ref="shareModalRef" :link="shareLink" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, h, onMounted, ref } from 'vue'
-import { deletePictureUsingPost, getPictureVoByIdUsingGet } from '@/api/pictureController.ts'
+import { deletePictureUsingPost, getPictureVoByIdUsingGet } from '@/api/pictureController'
 import { message } from 'ant-design-vue'
-import { DeleteOutlined, DownloadOutlined, EditOutlined } from '@ant-design/icons-vue'
-// import { useLoginUserStore } from '@/stores/useLoginUserStore.ts'
-import { useRouter } from 'vue-router'
-// import { downloadImage, formatSize } from '@/utils'
+import {
+  DeleteOutlined,
+  DownloadOutlined,
+  EditOutlined,
+  ShareAltOutlined,
+} from '@ant-design/icons-vue'
 import { useLoginUserStore } from '@/stores/userLoginUserStore'
 import { downloadImage, formatSize, toHexColor } from '@/utils'
+import ShareModal from '@/components/ShareModal.vue'
+import { useRouter } from 'vue-router'
 
 interface Props {
   id: string | number
@@ -120,7 +131,9 @@ const canEdit = computed(() => {
 const fetchPictureDetail = async () => {
   try {
     const res = await getPictureVoByIdUsingGet({
-      id: props.id,
+      // id: props.id,这个错误是因为 props.id 的类型是 string | number ，
+      // 但 getPictureVoByIdUsingGet 函数期望接收的 id 参数类型是 number | undefined 。
+      id: Number(props.id), // 将 id 转换为 number 类型
     })
     if (res.data.code === 0 && res.data.data) {
       picture.value = res.data.data
@@ -166,6 +179,19 @@ const doDelete = async () => {
 // 下载图片
 const doDownload = () => {
   downloadImage(picture.value.url)
+}
+
+// 分享弹窗引用
+const shareModalRef = ref()
+// 分享链接
+const shareLink = ref<string>('')
+
+// 分享
+const doShare = () => {
+  shareLink.value = `${window.location.protocol}//${window.location.host}/picture/${picture.value.id}`
+  if (shareModalRef.value) {
+    shareModalRef.value.openModal()
+  }
 }
 </script>
 

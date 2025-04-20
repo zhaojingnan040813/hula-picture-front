@@ -2,8 +2,6 @@
   <div class="picture-search-form">
     <!-- 搜索表单 -->
     <a-form name="searchForm" layout="inline" :model="searchParams" @finish="doSearch">
-
-
       <a-form-item label="关键词" name="searchText">
         <a-input
           v-model:value="searchParams.searchText"
@@ -11,7 +9,6 @@
           allow-clear
         />
       </a-form-item>
-
 
       <a-form-item name="category" label="分类">
         <a-auto-complete
@@ -22,8 +19,6 @@
           allow-clear
         />
       </a-form-item>
-
-
 
       <a-form-item name="tags" label="标签">
         <a-select
@@ -47,7 +42,6 @@
           @change="onRangeChange"
         />
       </a-form-item>
-
 
       <a-form-item label="名称" name="name">
         <a-input v-model:value="searchParams.name" placeholder="请输入名称" allow-clear />
@@ -76,7 +70,10 @@
 <script lang="ts" setup>
 import { onMounted, reactive, ref } from 'vue'
 import dayjs from 'dayjs'
-import {listPictureTagCategoryUsingGet, listPictureVoByPageUsingPost} from '@/api/pictureController.ts'
+import {
+  listPictureTagCategoryUsingGet,
+  listPictureVoByPageUsingPost,
+} from '@/api/pictureController'
 import { message } from 'ant-design-vue'
 
 interface Props {
@@ -94,8 +91,12 @@ const doSearch = () => {
 }
 
 // 标签和分类选项
-const categoryOptions = ref<string[]>([])
-const tagOptions = ref<string[]>([])
+// const categoryOptions = ref<string[]>([])
+// const tagOptions = ref<string[]>([])
+
+// 修改后
+const categoryOptions = ref<Array<{ value: string; label: string }>>([])
+const tagOptions = ref<Array<{ value: string; label: string }>>([])
 
 /**
  * 获取标签和分类选项
@@ -154,9 +155,14 @@ const rangePresets = ref([
 const doClear = () => {
   // 响应式的变量你不能给它直接赋值一个{} , 应该把它的每个值都拿到然后赋值 underfined
   // 取消所有对象的值
-  Object.keys(searchParams).forEach((key) => {
+  // Object.keys(searchParams).forEach((key) => {
+  //   searchParams[key] = undefined
+  // })
+
+  (Object.keys(searchParams) as Array<keyof API.PictureQueryRequest>).forEach((key) => {
     searchParams[key] = undefined
   })
+
   // 日期筛选项单独清空，必须定义为空数组
   dateRange.value = []
   // 清空后重新搜索

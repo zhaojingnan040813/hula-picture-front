@@ -1,7 +1,4 @@
 <template>
-
-
-
   <div id="spaceManagePage">
     <a-flex justify="space-between">
       <h2>空间管理</h2>
@@ -12,11 +9,9 @@
 
     <!-- 搜索表单 -->
     <a-form layout="inline" :model="searchParams" @finish="doSearch">
-
       <a-form-item label="空间名称">
         <a-input v-model:value="searchParams.spaceName" placeholder="请输入空间名称" allow-clear />
       </a-form-item>
-
 
       <a-form-item name="spaceLevel" label="空间级别">
         <a-select
@@ -28,18 +23,13 @@
         />
       </a-form-item>
 
-
       <a-form-item label="用户 id">
         <a-input v-model:value="searchParams.userId" placeholder="请输入用户 id" allow-clear />
       </a-form-item>
       <a-form-item>
         <a-button type="primary" html-type="submit">搜索</a-button>
       </a-form-item>
-
-
     </a-form>
-
-
 
     <!-- 表格 -->
     <a-table
@@ -49,32 +39,24 @@
       @change="doTableChange"
     >
       <template #bodyCell="{ column, record }">
-
-
         <template v-if="column.dataIndex === 'spaceLevel'">
           <div>{{ SPACE_LEVEL_MAP[record.spaceLevel] }}</div>
         </template>
-
 
         <template v-if="column.dataIndex === 'spaceUseInfo'">
           <div>大小：{{ formatSize(record.totalSize) }} / {{ formatSize(record.maxSize) }}</div>
           <div>数量：{{ record.totalCount }} / {{ record.maxCount }}</div>
         </template>
 
-
         <template v-if="column.dataIndex === 'createTime'">
           {{ dayjs(record.createTime).format('YYYY-MM-DD HH:mm:ss') }}
         </template>
-
 
         <template v-if="column.dataIndex === 'editTime'">
           {{ dayjs(record.editTime).format('YYYY-MM-DD HH:mm:ss') }}
         </template>
 
-
         <template v-else-if="column.key === 'action'">
-
-
           <a-space wrap>
             <a-button type="link" :href="`/add_space?id=${record.id}`" target="_blank">
               编辑
@@ -84,14 +66,7 @@
         </template>
       </template>
     </a-table>
-
-
-
   </div>
-
-
-
-
 </template>
 
 <script lang="ts" setup>
@@ -141,11 +116,11 @@ const columns = [
 ]
 
 // 定义全局数据  使用模版插槽就可以拿到script里面定义的值
-const dataList=ref([])
-const total=ref<Number>(0)
+const dataList = ref([])
+const total = ref<number>(0)
 
 //搜索条件
-const searchParams=reactive<API.SpaceQueryRequest>({
+const searchParams = reactive<API.SpaceQueryRequest>({
   current: 1,
   pageSize: 10,
   sortField: 'createTime',
@@ -154,15 +129,15 @@ const searchParams=reactive<API.SpaceQueryRequest>({
 
 // 这是一个计算属性，用于更新搜索条件，把上面的全局变量都包在了这个计算属性里面
 // 发生变化的时候会触发重新渲染，但是searchParams不是有了reactive了吗？
-const pagination=computed(()=>{
+const pagination = computed(() => {
   return {
-    current: searchParams.current??1,
-    pageSize:searchParams.pageSize??10,
+    current: searchParams.current ?? 1,
+    pageSize: searchParams.pageSize ?? 10,
     total: total.value,
-  // 我不明白下面还要再定义两个这个有什么用,后续注意一下这两个参数有没有出来,TODO
+    // 我不明白下面还要再定义两个这个有什么用,后续注意一下这两个参数有没有出来,TODO
     showSizeChanger: true,
     // 原来是这样解决total的爆红问题
-    showTotal: (total:Number)=>`共${total}条`
+    showTotal: (total: number) => `共${total}条`,
   }
 })
 
@@ -170,19 +145,20 @@ const pagination=computed(()=>{
 // 获取数据
 
 const fetchData = async () => {
-//   这里面叫函数体，写featch这个函数的具体实现
-// 我们这里就把请求参数解构了，请求参数是啥，怎么知道的，看接口文档，看这个方法要哪些东西
+  //   这里面叫函数体，写featch这个函数的具体实现
+  // 我们这里就把请求参数解构了，请求参数是啥，怎么知道的，看接口文档，看这个方法要哪些东西
   const res = await listSpaceByPageUsingPost({
-    ...searchParams
+    ...searchParams,
   })
 
-  if (res.data.data){//也就是从后端拿到数据了
-    dataList.value=res.data.data.records??[];//返回值是 Space[] 这里没错啊，为什么爆红!!!
+  if (res.data.data) {
+    //也就是从后端拿到数据了
+    dataList.value = res.data.data.records ?? [] //返回值是 Space[] 这里没错啊，为什么爆红!!!
     // dataList.value = res.data.data.records ?? []
-    total.value=res.data.data.total??0;
-  }else{
+    total.value = res.data.data.total ?? 0
+  } else {
     // 它们之间是用加号分割开的啊
-    message.error('获取数据失败,'+ res.data.message)
+    message.error('获取数据失败,' + res.data.message)
   }
 }
 
@@ -192,8 +168,8 @@ onMounted(() => {
 })
 
 // 重置搜索条件
-const doSearch=()=>{
-  searchParams.current=1
+const doSearch = () => {
+  searchParams.current = 1
   /**
    * 首先，`searchParams`是使用`reactive`创建的响应式对象。
    * 当它的属性变化时，Vue的响应式系统会检测到这些变化，并更新依赖这些属性的
@@ -206,13 +182,14 @@ const doSearch=()=>{
   fetchData()
 }
 // 表格变化处理
-const doTableChange=(page:any)=>{//这里的Page就是一个参数名，可以理解成是 int a
-  searchParams.current=page.current
+
+const doTableChange = (page: any) => {
+  //这里的Page就是一个参数名，可以理解成是 int a
+  searchParams.current = page.current
   searchParams.current = page.current
   searchParams.pageSize = page.pageSize
   fetchData()
 }
-
 
 // 删除数据
 const doDelete = async (id: string) => {
@@ -228,18 +205,4 @@ const doDelete = async (id: string) => {
     message.error('删除失败')
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 </script>
