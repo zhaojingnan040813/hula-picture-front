@@ -30,6 +30,12 @@
       >
         <a-input-password v-model:value="formState.checkPassword" placeholder="请输入确认密码" />
       </a-form-item>
+      <a-form-item name="userRole" :rules="[{ required: true, message: '请选择角色' }]">
+        <a-select v-model:value="formState.userRole" placeholder="请选择角色">
+          <a-select-option value="user">普通用户</a-select-option>
+          <a-select-option value="admin">管理员</a-select-option>
+        </a-select>
+      </a-form-item>
       <div class="tips">
         已有账号？
         <RouterLink to="/user/login">去登录</RouterLink>
@@ -53,6 +59,7 @@ const formState = reactive<API.UserRegisterRequest>({
   userAccount: '',
   userPassword: '',
   checkPassword: '',
+  userRole: 'user', // 默认为普通用户
 });
 
 const router = useRouter();
