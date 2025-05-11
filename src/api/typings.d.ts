@@ -479,3 +479,179 @@ declare namespace API {
     userRole?: string
   }
 }
+
+/**
+ * 分页响应
+ */
+export interface Page<T> {
+  records: T[];
+  total: number;
+  size: number;
+  current: number;
+  pages: number;
+}
+
+/**
+ * 消息发送请求
+ */
+export interface MessageSendRequest {
+  /**
+   * 接收者ID
+   */
+  receiverId: number;
+
+  /**
+   * 消息内容
+   */
+  content: string;
+
+  /**
+   * 消息类型：0-文本，1-图片，2-文件
+   */
+  contentType?: number;
+
+  /**
+   * 媒体URL，如图片或文件链接
+   */
+  mediaUrl?: string;
+}
+
+/**
+ * 消息查询请求
+ */
+export interface MessageQueryRequest {
+  /**
+   * 会话ID
+   */
+  sessionId?: number;
+
+  /**
+   * 目标用户ID
+   */
+  targetUserId?: number;
+
+  /**
+   * 页码
+   */
+  pageNum: number;
+
+  /**
+   * 每页条数
+   */
+  pageSize: number;
+}
+
+/**
+ * 消息会话DTO
+ */
+export interface MessageSessionDTO {
+  /**
+   * 会话ID
+   */
+  sessionId: number;
+
+  /**
+   * 对方用户ID
+   */
+  targetUserId: number;
+
+  /**
+   * 对方用户名称
+   */
+  targetUserName: string;
+
+  /**
+   * 对方用户头像
+   */
+  targetUserAvatar: string;
+
+  /**
+   * 最后一条消息内容
+   */
+  lastMessage: string;
+
+  /**
+   * 最后一条消息类型：0-文本，1-图片，2-文件
+   */
+  lastMessageType: number;
+
+  /**
+   * 未读消息数
+   */
+  unreadCount: number;
+
+  /**
+   * 最后活跃时间
+   */
+  lastActiveTime: string;
+
+  /**
+   * 是否在线
+   */
+  isOnline: boolean;
+}
+
+/**
+ * 消息内容DTO
+ */
+export interface MessageContentDTO {
+  /**
+   * 消息ID
+   */
+  id: number;
+
+  /**
+   * 会话ID
+   */
+  sessionId: number;
+
+  /**
+   * 发送者ID
+   */
+  senderId: number;
+
+  /**
+   * 发送者名称
+   */
+  senderName: string;
+
+  /**
+   * 发送者头像
+   */
+  senderAvatar: string;
+
+  /**
+   * 接收者ID
+   */
+  receiverId: number;
+
+  /**
+   * 消息内容
+   */
+  content: string;
+
+  /**
+   * 消息类型：0-文本，1-图片，2-文件
+   */
+  contentType: number;
+
+  /**
+   * 媒体URL，如图片或文件链接
+   */
+  mediaUrl?: string;
+
+  /**
+   * 是否已读：0-未读，1-已读
+   */
+  isRead: number;
+
+  /**
+   * 发送时间
+   */
+  createTime: string;
+
+  /**
+   * 是否自己发送的消息
+   */
+  isSelf: boolean;
+}

@@ -134,3 +134,19 @@ export async function updateUserUsingPost(
     ...(options || {}),
   })
 }
+
+/**
+ * 获取用户列表
+ */
+export async function getUserList() {
+  return request<API.BaseResponsePageUserVO_>('/api/user/list/page/vo', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: {
+      pageSize: 100, // 默认获取100个用户
+      current: 1
+    },
+  })
+}

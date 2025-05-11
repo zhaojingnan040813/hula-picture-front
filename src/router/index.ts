@@ -120,10 +120,16 @@ const router = createRouter({
       path: '/find_me',
       name: '找我',
       component: FindMePage
-    }
-
-
-
+    },
+    {
+      path: '/user/message',
+      name: 'UserMessage',
+      component: () => import('@/pages/user/MessagePage.vue'),
+      meta: {
+        title: '私信',
+        requireAuth: true,
+      },
+    },
   ],
 })
 

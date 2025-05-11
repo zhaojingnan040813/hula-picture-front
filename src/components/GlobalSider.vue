@@ -23,6 +23,7 @@ import {
   StarTwoTone,
   TeamOutlined,
   FolderOpenOutlined,
+  MessageOutlined,
 } from '@ant-design/icons-vue'
 import { useLoginUserStore } from '@/stores/userLoginUserStore'
 
@@ -61,6 +62,12 @@ const menuItems = [
     key: '/find_me',
     label: '找到我',
     icon: () => h(TeamOutlined),
+  },
+  {
+    key: '/user/message',
+    icon: () => h(MessageOutlined),
+    label: '私信',
+    requiredAuth: true,
   },
 ]
 
