@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref, withDefaults, defineExpose } from 'vue'
+import { ref } from 'vue'
 
 /**
  * 定义组件属性类型
