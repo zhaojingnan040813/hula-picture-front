@@ -76,14 +76,36 @@ import {
 } from '@/api/pictureController'
 import { message } from 'ant-design-vue'
 
+// 定义类型
+interface PictureQueryRequest {
+  category?: string
+  current?: number
+  endEditTime?: string | Date
+  id?: number
+  introduction?: string
+  name?: string
+  nullSpaceId?: boolean
+  pageSize?: number
+  picFormat?: string
+  picHeight?: number
+  picWidth?: number
+  searchText?: string
+  sortField?: string
+  sortOrder?: string
+  spaceId?: number
+  startEditTime?: string | Date
+  tags?: string[]
+  userId?: number
+}
+
 interface Props {
-  onSearch?: (searchParams: API.PictureQueryRequest) => void
+  onSearch?: (searchParams: PictureQueryRequest) => void
 }
 
 const props = defineProps<Props>()
 
 // 搜索条件
-const searchParams = reactive<API.PictureQueryRequest>({})
+const searchParams = reactive<PictureQueryRequest>({})
 
 // 搜索数据
 const doSearch = () => {
@@ -159,7 +181,7 @@ const doClear = () => {
   //   searchParams[key] = undefined
   // })
 
-  (Object.keys(searchParams) as Array<keyof API.PictureQueryRequest>).forEach((key) => {
+  ;(Object.keys(searchParams) as Array<keyof PictureQueryRequest>).forEach((key) => {
     searchParams[key] = undefined
   })
 

@@ -22,7 +22,7 @@ import {
   HeartOutlined,
   StarTwoTone,
   TeamOutlined,
-  FolderOpenOutlined
+  FolderOpenOutlined,
 } from '@ant-design/icons-vue'
 import { useLoginUserStore } from '@/stores/userLoginUserStore'
 
@@ -79,6 +79,10 @@ const doMenuClick = ({ key }: { key: string }) => {
     path: key,
   })
 }
+</script>
+
+<script lang="ts">
+export default {}
 </script>
 
 <style scoped>
