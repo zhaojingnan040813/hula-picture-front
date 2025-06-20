@@ -131,17 +131,24 @@ const canEdit = computed(() => {
 const fetchPictureDetail = async () => {
   try {
     const res = await getPictureVoByIdUsingGet({
-      // id: props.id,这个错误是因为 props.id 的类型是 string | number ，
-      // 但 getPictureVoByIdUsingGet 函数期望接收的 id 参数类型是 number | undefined 。
-      id: Number(props.id), // 将 id 转换为 number 类型
+      id: Number(props.id),
     })
     if (res.data.code === 0 && res.data.data) {
       picture.value = res.data.data
     } else {
-      message.error('获取图片详情失败，' + res.data.message)
+      message.error('获取图片详情失败，' + (res.data.message || '请求失败'))
+      // 如果是权限问题或图片不存在，跳转到首页
+      if (res.data.code === 40100 || res.data.code === 40400) {
+        router.push('/')
+      }
     }
   } catch (e: any) {
-    message.error('获取图片详情失败：' + e.message)
+    console.error('获取图片详情出错:', e)
+    message.error('获取图片详情失败：' + (e.message || '网络错误，请稍后再试'))
+    // 3秒后自动返回首页
+    setTimeout(() => {
+      router.push('/')
+    }, 3000)
   }
 }
 
